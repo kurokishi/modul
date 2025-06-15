@@ -29,6 +29,7 @@ class PortfolioCRUD:
             )
             if st.button("Simpan Perubahan"):
                 self.update_from_editor(edited_df)
+                st.session_state.portfolio = self.pm  # update session state
                 st.success("Portofolio diperbarui.")
                 st.rerun()
 
