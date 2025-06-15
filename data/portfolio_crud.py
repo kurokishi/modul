@@ -32,6 +32,11 @@ class PortfolioCRUD:
                 st.success("Portofolio diperbarui.")
                 st.rerun()
 
+        # Tombol Refresh Manual
+        st.markdown("---")
+        if st.button("🔁 Refresh Data & Tampilan"):
+            st.rerun()
+
     def add_stock(self, stock, ticker, lot, avg_price):
         balance = lot * 100
         new_row = {
@@ -55,7 +60,7 @@ class PortfolioCRUD:
             self.pm.df.loc[mask, 'Balance'] = row['Lot Balance'] * 100
             self.pm.df.loc[mask, 'Avg Price'] = row['Avg Price']
             self.pm.df.loc[mask, 'Stock Value'] = self.pm.df.loc[mask, 'Balance'] * row['Avg Price']
-            self.pm.df.loc[mask, 'Market Price'] = row['Avg Price']  # optional reset
+            self.pm.df.loc[mask, 'Market Price'] = row['Avg Price']
 
         self.pm.df['Market Value'] = self.pm.df['Balance'] * self.pm.df['Market Price']
         self.pm.df['Unrealized'] = self.pm.df['Market Value'] - self.pm.df['Stock Value']
