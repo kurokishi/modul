@@ -21,14 +21,14 @@ class PortfolioManager:
     @staticmethod
     def load_portfolio():
         return pd.DataFrame({
-            'Stock': ['AADI', 'ADRO', 'ANTM', 'BFIN', 'BJBR', 'BSSR', 'LPPF', 'PGAS', 'PTBA', 'UNVR', 'WIIM'],
-            'Ticker': ['AADI.JK', 'ADRO.JK', 'ANTM.JK', 'BFIN.JK', 'BJBR.JK', 'BSSR.JK', 'LPPF.JK', 'PGAS.JK', 'PTBA.JK', 'UNVR.JK', 'WIIM.JK'],
-            'Lot Balance': [5.0, 17.0, 15.0, 30.0, 23.0, 11.0, 5.0, 10.0, 4.0, 60.0, 5.0],
-            'Balance': [500, 1700, 1500, 3000, 2300, 1100, 500, 1000, 400, 6000, 500],
-            'Avg Price': [7300, 2605, 1423, 1080, 1145, 4489, 1700, 1600, 2400, 1860, 871],
-            'Stock Value': [3650000, 4428500, 2135000, 3240000, 2633500, 4938000, 850000, 1600000, 960000, 11162500, 435714],
-            'Market Price': [7225, 2200, 3110, 905, 850, 4400, 1745, 1820, 2890, 1730, 835],
-            'Unrealized': [-37500, -688500, 2530000, -525000, -678500, -98000, 22500, 220000, 196000, -782500, -18215]
+            'Stock': ['AADI', 'ADRO', 'ANTM', 'BFIN', 'BJBR', 'BSSR', 'PGAS', 'PTBA', 'UNVR', 'WIIM'],
+            'Ticker': ['AADI.JK', 'ADRO.JK', 'ANTM.JK', 'BFIN.JK', 'BJBR.JK', 'BSSR.JK', 'PGAS.JK', 'PTBA.JK', 'UNVR.JK', 'WIIM.JK'],
+            'Lot Balance': [5.0, 17.0, 15.0, 30.0, 23.0, 11.0, 10.0, 4.0, 60.0, 5.0],
+            'Balance': [500, 1700, 1500, 3000, 2300, 1100, 1000, 400, 6000, 500],
+            'Avg Price': [7300, 2605, 1423, 1080, 1145, 4489, 1600, 2400, 1860, 871],
+            'Stock Value': [3650000, 4428500, 2135000, 3240000, 2633500, 4938000, 1600000, 960000, 11162500, 435714],
+            'Market Price': [7225, 2200, 3110, 905, 850, 4400, 1820, 2890, 1730, 835],
+            'Unrealized': [-37500, -688500, 2530000, -525000, -678500, -98000, 220000, 196000, -782500, -18215]
         })
 
     def generate_historical_data(self):
