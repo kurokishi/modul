@@ -11,8 +11,8 @@ class DividendTracker:
         Contoh data dividen tahunan per saham. Bisa disambungkan ke API/data resmi
         """
         return pd.DataFrame({
-            'Stock': ['AADI', 'ADRO', 'ANTM', 'BFIN', 'BJBR', 'BSSR', 'LPPF', 'PGAS', 'PTBA', 'UNVR', 'WIIM'],
-            'Dividend/Share': [150, 230, 140, 90, 120, 310, 200, 210, 280, 300, 100],  # per lembar
+            'Stock': ['AADI', 'ADRO', 'ANTM', 'BFIN', 'BJBR', 'BSSR', 'PGAS', 'PTBA', 'UNVR', 'WIIM'],
+            'Dividend/Share': [150, 230, 140, 90, 120, 310, 210, 280, 300, 100],  # per lembar
             'Year': [2024] * 11
         })
 
