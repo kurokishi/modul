@@ -1,0 +1,10 @@
+portfolio_app/
+├── main.py
+├── data/
+│   └── portfolio_manager.py
+├── analysis/
+│   └── portfolio_analyzer.py
+├── visualization/
+│   └── portfolio_visualizer.py
+├── utils/
+│   └── formatter.py
