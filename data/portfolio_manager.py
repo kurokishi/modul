@@ -12,6 +12,11 @@ class PortfolioManager:
         self.new_stocks = self.get_new_stocks()
         self.last_update = datetime.now()
 
+        # Tambahkan ini untuk menghindari error kolom
+        self.df['Market Value'] = self.df['Balance'] * self.df['Market Price']
+        self.df['Unrealized'] = self.df['Market Value'] - self.df['Stock Value']
+
+
     @staticmethod
     def load_portfolio():
         return pd.DataFrame({
