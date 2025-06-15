@@ -42,7 +42,7 @@ class PortfolioVisualizer:
         if 'confidence' in forecast:
             fig.add_trace(go.Scatter(
                 x=forecast_df['Date'].tolist() + forecast_df['Date'].tolist()[::-1],
-                y=forecast['upper'].tolist() + forecast['lower'].tolist()[::-1],
+                y=forecast['upper'] + forecast['lower'][::-1],
                 fill='toself',
                 fillcolor='rgba(100, 150, 255, 0.2)',
                 line=dict(color='rgba(255,255,255,0)'),
