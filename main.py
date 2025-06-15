@@ -157,8 +157,6 @@ def main():
 
     # CRUD
     crud.display_editor()
-        if st.button("🔁 Refresh Data & Rekomendasi"):
-                    st.rerun()
-
+       
 if __name__ == "__main__":
     main()
