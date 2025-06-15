@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 import yfinance as yf
 import streamlit as st
 
-
 class PortfolioManager:
     def __init__(self):
         self.df = self.load_portfolio()
