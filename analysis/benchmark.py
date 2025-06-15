@@ -35,18 +35,19 @@ class BenchmarkAnalyzer:
                 daily_value = daily_value.merge(df[['Date', 'Value']].rename(columns={'Value': stock}),
                                                 on='Date', how='outer')
 
-        daily_value = daily_value.fillna(method='ffill')
+        daily_value = daily_value.ffill()
         daily_value['Portfolio'] = daily_value.drop(columns='Date').sum(axis=1)
         return daily_value[['Date', 'Portfolio']]
 
     def compare_vs_index(self, symbol="^JKSE"):
-        """
-        Membandingkan pertumbuhan portofolio dengan indeks tertentu
-        """
         index_df = self.get_index_data(symbol)
         portfolio_df = self.get_portfolio_history()
+    
+        # Normalize timezones
+        index_df['Date'] = pd.to_datetime(index_df['Date']).dt.tz_localize(None)
+        portfolio_df['Date'] = pd.to_datetime(portfolio_df['Date']).dt.tz_localize(None)
+    
         df = pd.merge(index_df, portfolio_df, on='Date', how='inner')
-
         df['Index %'] = df['Index'].pct_change().fillna(0).cumsum() * 100
         df['Portfolio %'] = df['Portfolio'].pct_change().fillna(0).cumsum() * 100
         return df[['Date', 'Index %', 'Portfolio %']]
