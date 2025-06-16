@@ -60,9 +60,6 @@ def main():
             if not alloc_df.empty:
                 st.dataframe(alloc_df, use_container_width=True)
 
-    # ===== CRUD Interaktif =====
-    crud.display_editor()
-
     # ===== Update Harga Pasar =====
     st.header("🔄 Real-time Market Data")
     col1, col2 = st.columns([1, 3])
@@ -140,6 +137,9 @@ def main():
         rebalance_df, opt_risk = opt.rebalance_recommendation()
         st.dataframe(rebalance_df, use_container_width=True)
         st.caption(f"Volatilitas optimal portofolio: {opt_risk:.2%}")
+
+    # ===== CRUD Interaktif =====
+    crud.display_editor()
 
 if __name__ == '__main__':
     main()
