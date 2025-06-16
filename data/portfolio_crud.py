@@ -9,17 +9,17 @@ class PortfolioCRUD:
     def display_editor(self):
         st.subheader("✏️ Edit Data Saham (CRUD)")
 
-        with st.expander("📂 Upload File Portofolio (CSV)"):
-            uploaded_file = st.file_uploader("Unggah file CSV", type=["csv"])
-            if uploaded_file:
-                try:
-                    df = pd.read_csv(uploaded_file)
-                    self.import_dataframe(df)
-                    st.success("Data CSV berhasil dimuat.")
-                    st.session_state.portfolio = self.pm
-                    st.rerun()
-                except Exception as e:
-                    st.error(f"Gagal membaca file: {str(e)}")
+        #with st.expander("📂 Upload File Portofolio (CSV)"):
+            #uploaded_file = st.file_uploader("Unggah file CSV", type=["csv"])
+            #if uploaded_file:
+                #try:
+                    #df = pd.read_csv(uploaded_file)
+                    #self.import_dataframe(df)
+                    #st.success("Data CSV berhasil dimuat.")
+                    #st.session_state.portfolio = self.pm
+                    #st.rerun()
+                #except Exception as e:
+                    #st.error(f"Gagal membaca file: {str(e)}")
 
         with st.expander("➕ Tambah Saham Baru"):
             new_stock = st.text_input("Kode Saham (e.g. TLKM)", max_chars=5)
