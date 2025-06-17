@@ -1,4 +1,5 @@
 # data/portfolio_crud.py
+
 import streamlit as st
 import pandas as pd
 
@@ -9,6 +10,21 @@ class PortfolioCRUD:
     def display_editor(self):
         st.subheader("✏️ Edit Data Saham (CRUD)")
 
+        # ===== Upload Portofolio dari CSV =====
+        with st.expander("📂 Upload File Portofolio (CSV)"):
+            uploaded_file = st.file_uploader("Unggah file CSV", type=["csv"])
+            if uploaded_file:
+                try:
+                    df = pd.read_csv(uploaded_file)
+                    self.import_dataframe(df)
+                    self.pm.load_from_csv(self.pm.df)
+                    st.session_state.portfolio = self.pm
+                    st.success("Data CSV berhasil dimuat.")
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Gagal membaca file: {str(e)}")
+
+        # ===== Tambah Saham Manual =====
         with st.expander("➕ Tambah Saham Baru"):
             new_stock = st.text_input("Kode Saham (e.g. TLKM)", max_chars=5)
             new_ticker = st.text_input("Kode Ticker (e.g. TLKM.JK)")
@@ -17,19 +33,31 @@ class PortfolioCRUD:
 
             if st.button("Tambah ke Portofolio") and new_stock and new_ticker:
                 self.add_stock(new_stock, new_ticker, new_lot, new_price)
+                self.pm.load_from_csv(self.pm.df)
                 st.session_state.portfolio = self.pm
                 st.success(f"Saham {new_stock} ditambahkan.")
                 st.rerun()
 
+        # ===== Edit / Hapus Saham =====
         with st.expander("📝 Edit / Hapus Saham yang Ada"):
             df = self.pm.df.copy()
+            df.columns = [col.strip() for col in df.columns]  # Bersihkan spasi
+
+            required_cols = ['Stock', 'Ticker', 'Lot Balance', 'Avg Price']
+            if not all(col in df.columns for col in required_cols):
+                st.warning(f"❗ Data tidak valid. Diperlukan kolom: {', '.join(required_cols)}")
+                return
+
             edited_df = st.data_editor(
-                df[['Stock', 'Ticker', 'Lot Balance', 'Avg Price']],
+                df[required_cols],
                 num_rows="dynamic",
                 key="edit_table"
             )
+
             if st.button("Simpan Perubahan"):
                 self.update_from_editor(edited_df)
+                self.pm.load_from_csv(self.pm.df)
+                st.session_state.portfolio = self.pm
                 st.success("Portofolio diperbarui.")
                 st.rerun()
 
@@ -38,17 +66,11 @@ class PortfolioCRUD:
             st.rerun()
 
     def add_stock(self, stock, ticker, lot, avg_price):
-        balance = lot * 100
         new_row = {
             'Stock': stock,
             'Ticker': ticker,
             'Lot Balance': float(lot),
-            'Balance': balance,
             'Avg Price': avg_price,
-            'Stock Value': balance * avg_price,
-            'Market Price': avg_price,
-            'Market Value': balance * avg_price,
-            'Unrealized': 0
         }
         self.pm.df = pd.concat([self.pm.df, pd.DataFrame([new_row])], ignore_index=True)
 
@@ -62,20 +84,15 @@ class PortfolioCRUD:
             mask = self.pm.df['Stock'] == row['Stock']
             self.pm.df.loc[mask, 'Ticker'] = row['Ticker']
             self.pm.df.loc[mask, 'Lot Balance'] = row['Lot Balance']
-            self.pm.df.loc[mask, 'Balance'] = row['Lot Balance'] * 100
             self.pm.df.loc[mask, 'Avg Price'] = row['Avg Price']
-            self.pm.df.loc[mask, 'Stock Value'] = self.pm.df.loc[mask, 'Balance'] * row['Avg Price']
-            self.pm.df.loc[mask, 'Market Price'] = row['Avg Price']
-
-        self.pm.df['Market Value'] = self.pm.df['Balance'] * self.pm.df['Market Price']
-        self.pm.df['Unrealized'] = self.pm.df['Market Value'] - self.pm.df['Stock Value']
-        st.session_state.portfolio = self.pm
 
     def import_dataframe(self, df):
         required_cols = {'Stock', 'Ticker', 'Lot Balance', 'Avg Price'}
+        df.columns = [col.strip() for col in df.columns]
         if not required_cols.issubset(df.columns):
             st.warning("Kolom CSV harus mengandung: Stock, Ticker, Lot Balance, Avg Price")
             return
+
         self.pm.df = pd.DataFrame()
         for _, row in df.iterrows():
             self.add_stock(row['Stock'], row['Ticker'], row['Lot Balance'], row['Avg Price'])
