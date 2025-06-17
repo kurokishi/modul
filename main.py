@@ -75,7 +75,10 @@ def main():
             alloc_df = allocator.simulate_allocation(budget, method)
             if not alloc_df.empty:
                 st.dataframe(alloc_df, use_container_width=True)
-
+  
+    # ===== CRUD =====
+    crud.display_editor()
+    
     # ===== Ringkasan =====
     st.header("📈 Portfolio Summary")
     summary = analyzer.portfolio_summary()
@@ -140,9 +143,6 @@ def main():
         rebalance_df, opt_risk = opt.rebalance_recommendation()
         st.dataframe(rebalance_df, use_container_width=True)
         st.caption(f"Volatilitas optimal portofolio: {opt_risk:.2%}")
-
-    # ===== CRUD =====
-    crud.display_editor()
     
 if __name__ == '__main__':
     main()
