@@ -23,6 +23,24 @@ def main():
         st.session_state.portfolio = PortfolioManager()
 
     pm = st.session_state.portfolio
+
+    st.title("📊 Portfolio Dashboard")
+    st.subheader("📂 Upload CSV Portofolio")
+    uploaded_file = st.file_uploader("Upload portofolio Anda (CSV dengan kolom: Stock, Ticker, Lot Balance, Avg Price)", type=["csv"])
+    if uploaded_file:
+        try:
+            df_porto = pd.read_csv(uploaded_file)
+            pm.load_from_csv(df_porto)
+            st.session_state.portfolio = pm
+            st.success("Portofolio berhasil dimuat.")
+            st.rerun()
+        except Exception as e:
+            st.error(f"Gagal membaca file: {e}")
+
+    if pm.df.empty:
+        st.info("Silakan unggah portofolio terlebih dahulu.")
+        return
+
     analyzer = PortfolioAnalyzer(pm)
     visualizer = PortfolioVisualizer()
     risk = RiskAnalyzer(pm)
@@ -32,9 +50,7 @@ def main():
     crud = PortfolioCRUD(pm)
     loader = InputLoader()
 
-    st.title("📊 Advanced Portfolio Analysis Dashboard")
-
-    # ===== Upload Data Analisis Awal =====
+    # ===== Upload & Analisis Data Screening Saham =====
     loader.upload_interface()
     uploaded_df = loader.get_analysis_data()
     if not uploaded_df.empty:
@@ -60,20 +76,7 @@ def main():
             if not alloc_df.empty:
                 st.dataframe(alloc_df, use_container_width=True)
 
-    # ===== Update Harga Pasar =====
-    st.header("🔄 Real-time Market Data")
-    col1, col2 = st.columns([1, 3])
-    with col1:
-        if st.button("Update Market Prices", type="primary"):
-            if pm.update_real_time_prices():
-                st.success("Market prices updated successfully!")
-                st.session_state.portfolio = pm
-                st.rerun()
-    with col2:
-        st.caption(f"Last update: {pm.last_update.strftime('%Y-%m-%d %H:%M:%S')}")
-        st.progress(100, text="Data Siap")
-
-    # ===== Ringkasan Portofolio =====
+    # ===== Ringkasan =====
     st.header("📈 Portfolio Summary")
     summary = analyzer.portfolio_summary()
     col1, col2, col3 = st.columns(3)
@@ -87,7 +90,7 @@ def main():
     with col2:
         st.plotly_chart(visualizer.performance_bar(pm.df), use_container_width=True)
 
-    # ===== Tabel Real-time Saham =====
+    # ===== Detail Real-time =====
     st.header("📋 Real-time Stock Details")
     pm.df['Unrealized %'] = (pm.df['Unrealized'] / pm.df['Stock Value']) * 100
     pm.df['Daily Change'] = (pm.df['Market Price'] / pm.df['Avg Price'] - 1) * 100
@@ -100,21 +103,21 @@ def main():
     styled_df = view_df.style.map(color_negative_red, subset=['Daily Change', 'Unrealized', 'Unrealized %'])
     st.dataframe(styled_df, use_container_width=True)
 
-    # ===== Rekomendasi Trading =====
+    # ===== Trading Recommendations =====
     st.header("💡 Trading Recommendations")
     rec_df = analyzer.generate_recommendations()
     rec_colors = {'Sell': 'red', 'Buy More': 'green', 'Hold/Buy': 'lightgreen', 'Hold/Sell': 'orange', 'Hold': 'gray'}
     styled_rec = rec_df.style.apply(lambda x: [f"background-color: {rec_colors.get(v, 'white')}" for v in x], subset=['Recommendation'])
     st.dataframe(styled_rec, use_container_width=True)
 
-    # ===== Analisis Risiko =====
+    # ===== Risiko =====
     with st.expander("🔍 Analisis Risiko"):
         risk_data = risk.risk_report()
         st.dataframe(risk_data['sector_distribution'], use_container_width=True)
         st.metric("Skor Konsentrasi (0-100)", risk_data['concentration_score'])
         st.dataframe(risk_data['volatility_table'], use_container_width=True)
 
-    # ===== Benchmark IHSG =====
+    # ===== Benchmark =====
     with st.expander("📊 Benchmarking vs IHSG"):
         bench_df = bench.compare_vs_index()
         metrics = bench.performance_metrics(bench_df)
@@ -132,14 +135,14 @@ def main():
         col1.metric("Total Dividen Tahunan", f"Rp {total_div:,.0f}")
         col2.metric("Rata-rata Yield", f"{avg_yield:.2f}%")
 
-    # ===== Optimasi Portofolio =====
+    # ===== Optimasi =====
     with st.expander("📈 Optimasi Alokasi Portofolio"):
         rebalance_df, opt_risk = opt.rebalance_recommendation()
         st.dataframe(rebalance_df, use_container_width=True)
         st.caption(f"Volatilitas optimal portofolio: {opt_risk:.2%}")
 
-    # ===== CRUD Interaktif =====
+    # ===== CRUD =====
     crud.display_editor()
-
+    
 if __name__ == '__main__':
     main()
